@@ -11,45 +11,57 @@ public class Reservation {
 	private Integer numQuarto;
 	private Date checkin;
 	private Date checkout;
-	
+
 	public static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-	
+
 	public Reservation() {
 	}
+
 	public Reservation(Integer numQuarto, Date checkin, Date checkout) {
+		if (!checkout.after(checkin)) {
+			throw new DomainException("Data do check-ou não pode ser anterior ao check-in.");
+		}
 		this.numQuarto = numQuarto;
 		this.checkin = checkin;
 		this.checkout = checkout;
 	}
+
 	public Integer getNumQuarto() {
 		return numQuarto;
 	}
+
 	public void setNumQuarto(Integer numQuarto) {
 		this.numQuarto = numQuarto;
 	}
+
 	public Date getCheckin() {
 		return checkin;
 	}
+
 	public Date getCheckout() {
 		return checkout;
 	}
+
 	public long duration() {
-		long dif = checkout.getTime()-checkin.getTime();
+		long dif = checkout.getTime() - checkin.getTime();
 		return TimeUnit.DAYS.convert(dif, TimeUnit.MILLISECONDS);
 	}
-	public void atualizacao(Date checkin, Date checkout) throws DomainException {
+
+	public void atualizacao(Date checkin, Date checkout) {
 		Date now = new Date();
-		if(checkin.before(now)||checkout.before(now)) {
+		if (checkin.before(now) || checkout.before(now)) {
 			throw new DomainException("Atualização de reservas somente em datas futuras.");
 		}
-		if(!checkout.after(checkin)) {
+		if (!checkout.after(checkin)) {
 			throw new DomainException("Data do check-out deve ser depois do check-in.");
 		}
 		this.checkin = checkin;
 		this.checkout = checkout;
 	}
+
 	@Override
 	public String toString() {
-		return "Quarto: " + numQuarto+ " Check-in: "+sdf.format(checkin)+" Check-out: "+sdf.format(checkout)+", "+ duration()+" noites";
+		return "Quarto: " + numQuarto + " Check-in: " + sdf.format(checkin) + " Check-out: " + sdf.format(checkout)
+				+ ", " + duration() + " noites";
 	}
 }
